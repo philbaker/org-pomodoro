@@ -507,10 +507,16 @@ The argument STATE is optional.  The default state is `:pomodoro`."
   (when org-pomodoro-timer (cancel-timer org-pomodoro-timer))
 
   ;; add the org-pomodoro-mode-line to the global-mode-string
-  (unless global-mode-string (setq global-mode-string '("")))
-  (unless (memq 'org-pomodoro-mode-line global-mode-string)
-    (setq global-mode-string (append global-mode-string
-                                     '(org-pomodoro-mode-line))))
+  ;; (unless global-mode-string (setq global-mode-string '("")))
+  ;; (unless (memq 'org-pomodoro-mode-line global-mode-string)
+  ;;   (setq global-mode-string (append global-mode-string
+  ;;                                    '(org-pomodoro-mode-line))))
+
+  ;; TODO: Test changing the clock position
+  (unless (memq 'org-pomodoro-mode-line mode-line-format)
+    (setq-default mode-line-format
+      (cons 'org-pomodoro-mode-line
+        (default-value 'mode-line-format))))
 
   (org-pomodoro-set (or state :pomodoro))
 
@@ -524,6 +530,12 @@ The argument STATE is optional.  The default state is `:pomodoro`."
   "Reset the org-pomodoro state."
   (when org-pomodoro-timer
     (cancel-timer org-pomodoro-timer))
+
+  ;; TODO: Line mode experiment
+  (setq-default mode-line-format
+    (remove 'org-pomodoro-mode-line
+      (default-value 'mode-line-format)))
+
   (setq org-pomodoro-state :none
         org-pomodoro-end-time nil)
   (org-pomodoro-update-mode-line)
